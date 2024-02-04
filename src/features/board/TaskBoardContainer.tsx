@@ -13,7 +13,7 @@ import React, { FC, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useAppDispatch } from '../../hooks/useDispatch'
 import { useAppSelector } from '../../hooks/useSelector'
-import { swapColumns } from '../../store/slices/BoardSlice'
+import { swapColumns, swapTasksOverATable } from '../../store/slices/BoardSlice'
 import { Column, Task } from '../../types'
 import ColumnContainer from './ColumnContainer'
 import CreateColumnButton from './CreateColumnButton'
@@ -28,13 +28,14 @@ const TaskBoardContainer: FC = () => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 100,
+        distance: 25,
       },
     })
   )
 
   function onDragEnd(e: DragEndEvent) {
     setActiveColumn(null)
+    setActiveTask(null)
     const { active, over } = e
     if (!over) return
 
@@ -43,8 +44,9 @@ const TaskBoardContainer: FC = () => {
     if (activeColumnId === overColumnId) return
     if (e.active.data.current?.type === 'column') {
       dispatch(swapColumns({ activeColumnId, overColumnId }))
-    }
+    } else return
   }
+
   function onDragStart(e: DragStartEvent) {
     if (e.active.data.current?.type === 'column') {
       setActiveColumn(e.active.data.current.column)
@@ -56,17 +58,31 @@ const TaskBoardContainer: FC = () => {
       return
     }
   }
+
   function onDragOver(e: DragOverEvent) {
     const { active, over } = e
     if (!over) return
 
-    const activeColumnId = active.id
-    const overColumnId = over.id
-    if (activeColumnId === overColumnId) return
+    const activeId = active.id
+    const overId = over.id
+
+    if (activeId === overId) return
 
     const isActiveATask = active.data.current?.type === 'task'
-    const isOverATask = active.data.current?.type === 'task'
-    if (isActiveATask && isOverATask) {
+    const isOverATask = over.data.current?.type === 'task'
+
+    if (!isActiveATask) return
+
+    const activeTaskId = active.data.current?.task?.id
+    const overTaskId = over.data.current?.task?.id
+
+    if (isActiveATask && isOverATask && activeTaskId && overTaskId) {
+      dispatch(
+        swapTasksOverATable({
+          targetTaskId: activeTaskId,
+          onDropTaskId: overTaskId,
+        })
+      )
     }
   }
 

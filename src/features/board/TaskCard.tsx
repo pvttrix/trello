@@ -1,4 +1,4 @@
-import { SortableContext, useSortable } from '@dnd-kit/sortable'
+import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { FC, useEffect, useRef, useState } from 'react'
 import { FaEdit } from 'react-icons/fa'
@@ -8,11 +8,14 @@ import { updateTask } from '../../store/slices/BoardSlice'
 import { Task } from '../../types'
 import InputField from '../../ui/InputField'
 
-const TaskCard: FC<{ task: Task }> = ({ task }) => {
+const TaskCard: FC<{ task: Task; isDraggable?: boolean }> = ({
+  task,
+  isDraggable = false,
+}) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const taskId = task.id
   const [content, setContent] = useState(task.content)
-  const [isEditing, setIsEditing] = useState(true)
+  const [isEditing, setIsEditing] = useState(isDraggable ? false : true)
   const dispatch = useAppDispatch()
 
   const {

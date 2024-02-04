@@ -62,6 +62,36 @@ export const boardSlice = createSlice({
     ) => {
       return { ...state, tasks: [...state.tasks, action.payload] }
     },
+
+    swapTasksOverATable: (
+      state,
+      action: PayloadAction<{ targetTaskId: string; onDropTaskId: string }>
+    ) => {
+      const { targetTaskId, onDropTaskId } = action.payload
+
+      const targetIndex = state.tasks.findIndex(
+        (task) => task.id === targetTaskId
+      )
+      const onDropIndex = state.tasks.findIndex(
+        (task) => task.id === onDropTaskId
+      )
+
+      if (targetIndex !== -1 && onDropIndex !== -1) {
+        const updatedTasks = [...state.tasks]
+        const [movedTask] = updatedTasks.splice(targetIndex, 1)
+        updatedTasks.splice(onDropIndex, 0, {
+          ...movedTask,
+          columnId: state.tasks[onDropIndex].columnId,
+        })
+
+        return {
+          ...state,
+          tasks: updatedTasks,
+        }
+      }
+
+      return state // If tasks or indices are not found, return the unchanged state
+    },
     updateTask: (
       state,
       action: PayloadAction<{ taskId: UniqueIdentifier; content: string }>
@@ -101,6 +131,7 @@ export const {
   updateColumnName,
   swapColumns,
   updateTask,
+  swapTasksOverATable,
 } = boardSlice.actions
 
 export const selectBoard = (state: RootState) => state.board
