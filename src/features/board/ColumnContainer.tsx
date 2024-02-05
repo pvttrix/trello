@@ -8,11 +8,12 @@ import { Column } from '../../types'
 import AddTaskButton from './AddTaskButton'
 import TaskCard from './TaskCard'
 import UpdateColumnTitle from './UpdateColumnTitle'
+
 const ColumnContainer: FC<{ column: Column }> = ({ column }) => {
   const [isTitleEditing, setIsTitleEditing] = useState(false)
   const tasks = useAppSelector(selectTasks(column.id))
   const tasksIds = useMemo(() => tasks.map((task) => task.id), [tasks])
-  console.log(tasksIds)
+
   const {
     setNodeRef,
     attributes,
@@ -45,9 +46,10 @@ const ColumnContainer: FC<{ column: Column }> = ({ column }) => {
       ></div>
     )
   }
+
   return (
     <div
-      className="flex gap-3 flex-col basis-[320px] grow-0 shrink-0 h-full p-2 rounded-sm bg-lime-100 "
+      className="flex gap-3 flex-col basis-[320px] grow-0 shrink-0 h-full p-2 rounded-sm "
       ref={setNodeRef}
       style={style}
     >

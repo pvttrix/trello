@@ -5,14 +5,12 @@ import { v4 as uuidv4 } from 'uuid'
 import { Column, Task } from '../../types'
 import type { RootState } from '../store'
 
-// Define a type for the slice state
 interface IBoardState {
   name: string
   columns: Column[]
   tasks: Task[]
 }
 
-// Define the initial state using that type
 const initialState: IBoardState = {
   name: '',
   columns: [],
@@ -67,31 +65,30 @@ export const boardSlice = createSlice({
       state,
       action: PayloadAction<{ targetTaskId: string; onDropTaskId: string }>
     ) => {
-      const { targetTaskId, onDropTaskId } = action.payload
-
-      const targetIndex = state.tasks.findIndex(
-        (task) => task.id === targetTaskId
+      const activeIndex = state.tasks.findIndex(
+        (task) => task.id === action.payload.targetTaskId
       )
-      const onDropIndex = state.tasks.findIndex(
-        (task) => task.id === onDropTaskId
+      const overIndex = state.tasks.findIndex(
+        (task) => task.id === action.payload.onDropTaskId
       )
 
-      if (targetIndex !== -1 && onDropIndex !== -1) {
-        const updatedTasks = [...state.tasks]
-        const [movedTask] = updatedTasks.splice(targetIndex, 1)
-        updatedTasks.splice(onDropIndex, 0, {
-          ...movedTask,
-          columnId: state.tasks[onDropIndex].columnId,
-        })
-
-        return {
-          ...state,
-          tasks: updatedTasks,
-        }
-      }
-
-      return state // If tasks or indices are not found, return the unchanged state
+      state.tasks[activeIndex].columnId = state.tasks[overIndex].columnId
+      state.tasks = arrayMove(state.tasks, activeIndex, overIndex)
     },
+
+    addTaskInEmptyColumn: (
+      state,
+      action: PayloadAction<{ targetTaskId: string; onDropColumnId: string }>
+    ) => {
+      const activeIndex = state.tasks.findIndex(
+        (task) => task.id === action.payload.targetTaskId
+      )
+      console.log(action.payload.onDropColumnId)
+      state.tasks[activeIndex].columnId = action.payload.onDropColumnId
+
+      console.log(state.tasks[activeIndex])
+    },
+
     updateTask: (
       state,
       action: PayloadAction<{ taskId: UniqueIdentifier; content: string }>
@@ -132,6 +129,7 @@ export const {
   swapColumns,
   updateTask,
   swapTasksOverATable,
+  addTaskInEmptyColumn,
 } = boardSlice.actions
 
 export const selectBoard = (state: RootState) => state.board

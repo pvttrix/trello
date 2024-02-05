@@ -13,7 +13,11 @@ import React, { FC, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useAppDispatch } from '../../hooks/useDispatch'
 import { useAppSelector } from '../../hooks/useSelector'
-import { swapColumns, swapTasksOverATable } from '../../store/slices/BoardSlice'
+import {
+  addTaskInEmptyColumn,
+  swapColumns,
+  swapTasksOverATable,
+} from '../../store/slices/BoardSlice'
 import { Column, Task } from '../../types'
 import ColumnContainer from './ColumnContainer'
 import CreateColumnButton from './CreateColumnButton'
@@ -71,16 +75,29 @@ const TaskBoardContainer: FC = () => {
     const isActiveATask = active.data.current?.type === 'task'
     const isOverATask = over.data.current?.type === 'task'
 
-    if (!isActiveATask) return
+    if (!isActiveATask && !isOverATask) return
 
-    const activeTaskId = active.data.current?.task?.id
+    const activeTaskId = active.data.current?.task?.id as string
     const overTaskId = over.data.current?.task?.id
-
+    //1) Swapping Tasks between each other
     if (isActiveATask && isOverATask && activeTaskId && overTaskId) {
       dispatch(
         swapTasksOverATable({
           targetTaskId: activeTaskId,
           onDropTaskId: overTaskId,
+        })
+      )
+      return
+    }
+
+    //2 Swap task inside column
+    const isOverAColumn = over.data.current?.type === 'column'
+    const overColumnId = over.data.current?.column?.id
+    if (isActiveATask && isOverAColumn) {
+      dispatch(
+        addTaskInEmptyColumn({
+          targetTaskId: activeTaskId,
+          onDropColumnId: overColumnId,
         })
       )
     }
