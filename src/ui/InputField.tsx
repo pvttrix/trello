@@ -23,7 +23,7 @@ const InputField: FC<InputProps> = ({
   onChange,
 }) => {
   return (
-    <div className="input-wrapper mt-4">
+    <div className="input-wrapper mt-4 w-full">
       <label
         htmlFor={label}
         className="font-bold text-xl text-primary-col block mb-2"
@@ -38,11 +38,11 @@ const InputField: FC<InputProps> = ({
         placeholder={placeholder}
         onChange={onChange}
         disabled={disabled}
-        className="text-base font-normal w-60 text-primary-col
-         bg-white border
-          border-gray-300 rounded-lg 
+        className="text-base font-normal text-primary-col
+          bg-white border
+          border-primary-col rounded-lg
           shadow-sm py-2 px-4 focus:outline-none 
-          focus:ring focus:border-blue-300"
+          focus:ring focus:border-primary-col w-full"
       />
       {error && (
         <p className="error text-red-500 text-sm font-normal mt-1 ml-3">

@@ -124,7 +124,14 @@ const TaskBoardContainer: FC = () => {
     )
 
   return (
-    <div className="flex gap-5 w-full bg-white h-full rounded-2xl p-6 min-w-full overflow-x-scroll">
+    <div className="
+    flex gap-5 w-full
+    items-center
+    bg-white h-full
+    rounded-2xl p-6
+    min-w-full
+    overflow-x-scroll"
+    >
       <DndContext
         onDragEnd={onDragEnd}
         onDragOver={onDragOver}

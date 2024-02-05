@@ -24,6 +24,7 @@ const CustomButton: FC<CustomButtonProps> = ({
       text-white text-base
       font-bold
       flex items-center justify-center
+      
       ${className || ''}`}
     >
       {children}

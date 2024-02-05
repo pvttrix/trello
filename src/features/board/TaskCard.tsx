@@ -15,7 +15,7 @@ const TaskCard: FC<{ task: Task; isDraggable?: boolean }> = ({
   const inputRef = useRef<HTMLInputElement | null>(null)
   const taskId = task.id
   const [content, setContent] = useState(task.content)
-  const [isEditing, setIsEditing] = useState(isDraggable ? false : true)
+  const [isEditing, setIsEditing] = useState(!isDraggable)
   const dispatch = useAppDispatch()
 
   const {
@@ -49,7 +49,7 @@ const TaskCard: FC<{ task: Task; isDraggable?: boolean }> = ({
 
   return (
     <div
-      className={`py-5 px-2 w-full bg-white-accent rounded-md flex justify-stretch items-end gap-2 ${
+      className={`py-5 px-2 w-full bg-white-accent rounded-md flex justify-stretch items-end gap-2 text-primary-col ${
         isDragging ? 'opacity-35' : ''
       }`}
       ref={setNodeRef}

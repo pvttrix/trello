@@ -10,7 +10,7 @@ const CreateColumnButton: FC<{ idx: number }> = ({ idx }) => {
       <Modal.Open opens="create-column">
         <Button
           type="button"
-          className="flex gap-2 items-center px-[4px]"
+          className="flex gap-2 items-center px-[4px] bg-secondary-col"
         >
           <IoMdAddCircleOutline />
         </Button>

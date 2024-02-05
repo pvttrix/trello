@@ -5,7 +5,9 @@
 html,body,#root {
   @apply h-full;
 }
-
+* {
+  @apply font-mono
+}
 body {
   @apply bg-base-col;
 }

@@ -1,4 +1,4 @@
-import React, {
+import  {
   FC,
   ReactNode,
   cloneElement,
@@ -17,19 +17,25 @@ interface ModalContextProps {
 }
 
 const StyledModal = `
-  fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-100
-  rounded-lg shadow-lg p-8 transition-all duration-500
+  fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+  bg-gray-100
+  rounded-lg shadow-lg p-8 
+  transition-all 
+  duration-500
 `
 
 const Overlay = `
-  fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 backdrop-blur-md z-1000 transition-all duration-500
+  fixed top-0 left-0 w-full 
+  h-full bg-black bg-opacity-50 
+  backdrop-blur-md z-1000 transition-all 
+  duration-500
 `
 
 const Button = `
-  bg-none border-none p-1 rounded-sm transform translate-x-2 transition-all duration-200 absolute top-3 right-4
-
+  bg-none border-none p-1 rounded-lg 
+  transform translate-x-2 transition-all 
+  duration-200 absolute top-3 right-4
   hover:bg-gray-200
-
   svg {
     w-6 h-6 text-gray-500
   }
@@ -72,7 +78,7 @@ interface OpenProps {
 const Open: FC<OpenProps> = ({ children, opens, className }) => {
   const { open } = useContext(ModalContext)
 
-  return cloneElement(children as any, {
+  return cloneElement(children as never, {
     onClick: () => open(opens),
     className: className,
   })

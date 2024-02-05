@@ -11,7 +11,9 @@ import UpdateColumnTitle from './UpdateColumnTitle'
 
 const ColumnContainer: FC<{ column: Column }> = ({ column }) => {
   const [isTitleEditing, setIsTitleEditing] = useState(false)
+
   const tasks = useAppSelector(selectTasks(column.id))
+
   const tasksIds = useMemo(() => tasks.map((task) => task.id), [tasks])
 
   const {
@@ -40,7 +42,7 @@ const ColumnContainer: FC<{ column: Column }> = ({ column }) => {
         className="flex gap-3 opacity-35
          flex-col basis-[320px] 
          grow-0 shrink-0 h-full 
-         p-2 rounded-sm bg-lime-100 border-slate-300 border"
+         p-2 rounded-sm bg-lime-100 border-slate-300 border "
         ref={setNodeRef}
         style={style}
       ></div>
@@ -49,7 +51,7 @@ const ColumnContainer: FC<{ column: Column }> = ({ column }) => {
 
   return (
     <div
-      className="flex gap-3 flex-col basis-[320px] grow-0 shrink-0 h-full p-2 rounded-sm "
+      className="flex gap-3 flex-col basis-[320px] grow-0 shrink-0 h-full p-2 rounded-lg bg-base-col"
       ref={setNodeRef}
       style={style}
     >

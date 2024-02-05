@@ -83,10 +83,8 @@ export const boardSlice = createSlice({
       const activeIndex = state.tasks.findIndex(
         (task) => task.id === action.payload.targetTaskId
       )
-      console.log(action.payload.onDropColumnId)
       state.tasks[activeIndex].columnId = action.payload.onDropColumnId
 
-      console.log(state.tasks[activeIndex])
     },
 
     updateTask: (
