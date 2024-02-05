@@ -42,7 +42,7 @@ const ColumnContainer: FC<{ column: Column }> = ({ column }) => {
         className="flex gap-3 opacity-35
          flex-col basis-[320px] 
          grow-0 shrink-0 h-full 
-         p-2 rounded-sm bg-lime-100 border-slate-300 border "
+         p-2 rounded-lg bg-lime-100 border-slate-300 border "
         ref={setNodeRef}
         style={style}
       ></div>
@@ -83,10 +83,7 @@ const ColumnContainer: FC<{ column: Column }> = ({ column }) => {
       <div className="flex gap-5 flex-col">
         <SortableContext items={tasksIds}>
           {tasks.map((task) => (
-            <TaskCard
-              task={task}
-              key={task.id}
-            />
+            <TaskCard task={task} key={task.id} />
           ))}
         </SortableContext>
         <AddTaskButton column={column} />

@@ -124,7 +124,8 @@ const TaskBoardContainer: FC = () => {
     )
 
   return (
-    <div className="
+    <div
+      className="
     flex gap-5 w-full
     items-center
     bg-white h-full
@@ -142,10 +143,7 @@ const TaskBoardContainer: FC = () => {
           {columns.map((column, idx) => (
             <React.Fragment key={column.id}>
               <CreateColumnButton idx={idx} />
-              <ColumnContainer
-                key={column.id}
-                column={column}
-              />
+              <ColumnContainer key={column.id} column={column} />
             </React.Fragment>
           ))}
           <CreateColumnButton idx={columns.length} />
@@ -153,12 +151,7 @@ const TaskBoardContainer: FC = () => {
         {createPortal(
           <DragOverlay>
             {activeColumn && <ColumnContainer column={activeColumn} />}
-            {activeTask && (
-              <TaskCard
-                task={activeTask}
-                isDraggable={true}
-              />
-            )}
+            {activeTask && <TaskCard task={activeTask} />}
           </DragOverlay>,
           document.body
         )}

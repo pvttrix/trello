@@ -10,7 +10,7 @@ const AddTaskButton: FC<{ column: Column }> = ({ column }) => {
   }
   return (
     <button
-      className="px-4 py-2 w-full bg-white-accent  text-base text-primary-col"
+      className="px-4 py-2 w-full bg-white-accent rounded-lg text-base text-primary-col"
       onClick={handleAddTask}
     >
       Add task

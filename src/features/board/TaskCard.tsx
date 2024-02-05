@@ -1,21 +1,16 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { FC, useEffect, useRef, useState } from 'react'
-import { FaEdit } from 'react-icons/fa'
-import { FcCheckmark } from 'react-icons/fc'
+import { FC, useState } from 'react'
+
 import { useAppDispatch } from '../../hooks/useDispatch'
 import { updateTask } from '../../store/slices/BoardSlice'
 import { Task } from '../../types'
-import InputField from '../../ui/InputField'
 
-const TaskCard: FC<{ task: Task; isDraggable?: boolean }> = ({
-  task,
-  isDraggable = false,
-}) => {
-  const inputRef = useRef<HTMLInputElement | null>(null)
+import TextArea from '../../ui/TextArea.tsx'
+
+const TaskCard: FC<{ task: Task }> = ({ task }) => {
   const taskId = task.id
   const [content, setContent] = useState(task.content)
-  const [isEditing, setIsEditing] = useState(!isDraggable)
   const dispatch = useAppDispatch()
 
   const {
@@ -38,13 +33,8 @@ const TaskCard: FC<{ task: Task; isDraggable?: boolean }> = ({
     transform: CSS.Transform.toString(transform),
   }
 
-  useEffect(() => {
-    inputRef.current?.focus()
-  }, [inputRef])
-
   function handleUpdateTaskContent() {
     dispatch(updateTask({ taskId, content }))
-    setIsEditing(false)
   }
 
   return (
@@ -57,30 +47,11 @@ const TaskCard: FC<{ task: Task; isDraggable?: boolean }> = ({
       {...attributes}
       {...listeners}
     >
-      {isEditing ? (
-        <>
-          <InputField
-            value={content}
-            type="text"
-            ref={inputRef}
-            onChange={(e) => setContent(e.target.value)}
-          />
-          <button
-            type="button"
-            onClick={handleUpdateTaskContent}
-            className="w-[40px] h-[40px] flex justify-center items-center"
-          >
-            <FcCheckmark />
-          </button>
-        </>
-      ) : (
-        <div className="flex justify-between gap-5 items-center w-full">
-          <span>{task.content}</span>
-          <button onClick={() => setIsEditing((isEditing) => !isEditing)}>
-            <FaEdit />
-          </button>
-        </div>
-      )}
+      <TextArea
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        onBlur={handleUpdateTaskContent}
+      />
     </div>
   )
 }
