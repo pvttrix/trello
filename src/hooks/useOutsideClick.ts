@@ -1,7 +1,8 @@
-import { RefObject, useEffect, useRef } from 'react'
+import type { RefObject} from 'react';
+import { useEffect, useRef } from 'react'
 
 type OutsideClickHandler = () => void
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export function useOutsideClick(
   handler: OutsideClickHandler,
   listenCapturing = true

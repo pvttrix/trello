@@ -1,16 +1,17 @@
+import type { DragEndEvent, DragOverEvent, DragStartEvent } from '@dnd-kit/core'
+import { closestCenter } from '@dnd-kit/core'
 import {
   DndContext,
-  DragEndEvent,
-  DragOverEvent,
   DragOverlay,
-  DragStartEvent,
   PointerSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
-import React, { FC, useMemo, useState } from 'react'
+import type { FC } from 'react'
+import React, { useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
+
 import { useAppDispatch } from '../../hooks/useDispatch'
 import { useAppSelector } from '../../hooks/useSelector'
 import {
@@ -18,7 +19,8 @@ import {
   swapColumns,
   swapTasksOverATable,
 } from '../../store/slices/BoardSlice'
-import { Column, Task } from '../../types'
+import type { Column, Task } from '../../types'
+
 import ColumnContainer from './ColumnContainer'
 import CreateColumnButton from './CreateColumnButton'
 import TaskCard from './TaskCard'
@@ -43,8 +45,8 @@ const TaskBoardContainer: FC = () => {
     const { active, over } = e
     if (!over) return
 
-    const activeColumnId = active.id
-    const overColumnId = over.id
+    const activeColumnId = active.id as string
+    const overColumnId = over.id as string
     if (activeColumnId === overColumnId) return
     if (e.active.data.current?.type === 'column') {
       dispatch(swapColumns({ activeColumnId, overColumnId }))
@@ -131,13 +133,14 @@ const TaskBoardContainer: FC = () => {
     bg-white h-full
     rounded-2xl p-6
     min-w-full
-    overflow-x-scroll"
+    overflow-x-auto"
     >
       <DndContext
         onDragEnd={onDragEnd}
         onDragOver={onDragOver}
         onDragStart={onDragStart}
         sensors={sensors}
+        collisionDetection={closestCenter}
       >
         <SortableContext items={columnsId}>
           {columns.map((column, idx) => (

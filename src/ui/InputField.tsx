@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, InputHTMLAttributes, MutableRefObject } from 'react'
+import type { ChangeEvent, FC, InputHTMLAttributes, MutableRefObject } from 'react'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   type: 'text' | 'number' | 'email' | 'password'

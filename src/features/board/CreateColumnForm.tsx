@@ -1,18 +1,34 @@
-import { FC, FormEvent, useState } from 'react'
+import type { FC, FormEvent } from 'react'
+import { useState } from 'react'
+
 import { useAppDispatch } from '../../hooks/useDispatch'
 import { addColumn } from '../../store/slices/BoardSlice'
 import Button from '../../ui/Button'
 import InputField from '../../ui/InputField'
 
-const CreateColumn: FC<{ onCloseModal?: () => void; idx: number }> = ({
-  onCloseModal,
-  idx,
-}) => {
+interface CreateColumnProps {
+  onCloseModal?: () => void
+  idx: number
+}
+
+const CreateColumn: FC<CreateColumnProps> = ({ onCloseModal, idx }) => {
   const [columnName, setColumnName] = useState('')
+  const [error, setError] = useState<string>('')
+
   const dispatch = useAppDispatch()
 
   function handleCreateDesk(e: FormEvent) {
     e.preventDefault()
+
+    if (!columnName.trim()) {
+      setError('Column name cannot be empty')
+      return
+    }
+
+    if (columnName.length > 150) {
+      setError('Column name must be less than 150 characters')
+      return
+    }
 
     dispatch(addColumn({ title: columnName, index: idx }))
     onCloseModal?.()
@@ -29,8 +45,11 @@ const CreateColumn: FC<{ onCloseModal?: () => void; idx: number }> = ({
         type="text"
         placeholder="Enter a column"
         value={columnName}
-        onChange={(e) => setColumnName(e.target.value)}
-        error={false}
+        onChange={(e) => {
+          setColumnName(e.target.value)
+          setError('')
+        }}
+        error={error !== ''}
       />
       <Button type="submit">Create Column</Button>
     </form>

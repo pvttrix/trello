@@ -16,7 +16,7 @@ function App() {
 
 "
     >
-      <TaskBoard />{' '}
+      <TaskBoard />
     </div>
   )
 }

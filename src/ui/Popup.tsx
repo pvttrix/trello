@@ -1,13 +1,8 @@
-import  {
-  FC,
-  ReactNode,
-  cloneElement,
-  createContext,
-  useContext,
-  useState,
-} from 'react'
+import type { FC, ReactNode } from 'react'
+import { cloneElement, createContext, useContext, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { HiX } from 'react-icons/hi'
+
 import { useOutsideClick } from '../hooks/useOutsideClick'
 
 interface ModalContextProps {
@@ -15,31 +10,6 @@ interface ModalContextProps {
   close: () => void
   open: (name: string) => void
 }
-
-const StyledModal = `
-  fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-  bg-gray-100
-  rounded-lg shadow-lg p-8 
-  transition-all 
-  duration-500
-`
-
-const Overlay = `
-  fixed top-0 left-0 w-full 
-  h-full bg-black bg-opacity-50 
-  backdrop-blur-md z-1000 transition-all 
-  duration-500
-`
-
-const Button = `
-  bg-none border-none p-1 rounded-lg 
-  transform translate-x-2 transition-all 
-  duration-200 absolute top-3 right-4
-  hover:bg-gray-200
-  svg {
-    w-6 h-6 text-gray-500
-  }
-`
 
 const ModalContext = createContext<ModalContextProps>({
   openName: '',
@@ -96,19 +66,39 @@ const Window: FC<WindowProps> = ({ children, name }) => {
   if (name !== openName) return null
 
   return createPortal(
-    <div className={Overlay}>
+    <div
+      className=" fixed top-0 left-0 w-full
+      h-full bg-black bg-opacity-50
+      backdrop-blur-md z-1000 transition-all
+      duration-500"
+    >
       <div
-        className={StyledModal}
+        className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+        bg-gray-100
+        rounded-lg shadow-lg p-8
+         transition-all
+        duration-500"
         ref={ref}
       >
         <button
-          className={Button}
+          className="bg-none border-none p-1 rounded-lg
+           transform translate-x-2 transition-all
+            duration-200 absolute top-3 right-4
+            hover:bg-gray-200
+            svg {
+            w-6 h-6 text-gray-500
+            }"
           onClick={close}
         >
           <HiX />
         </button>
 
-        <div>{cloneElement(children as any, { onCloseModal: close })}</div>
+        <div>
+          {
+            /* eslint-disable @typescript-eslint/no-explicit-any */
+            cloneElement(children as any, { onCloseModal: close })
+          }
+        </div>
       </div>
     </div>,
     document.body

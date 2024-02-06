@@ -1,17 +1,26 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { FC, useState } from 'react'
+import type { FC } from 'react'
+import { useEffect } from 'react'
+import { useState } from 'react'
 
 import { useAppDispatch } from '../../hooks/useDispatch'
 import { updateTask } from '../../store/slices/BoardSlice'
-import { Task } from '../../types'
-
+import type { Task } from '../../types'
 import TextArea from '../../ui/TextArea.tsx'
 
-const TaskCard: FC<{ task: Task }> = ({ task }) => {
+interface TaskCardProps {
+  task: Task
+}
+
+const TaskCard: FC<TaskCardProps> = ({ task }) => {
   const taskId = task.id
   const [content, setContent] = useState(task.content)
   const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    setContent(task.content)
+  }, [task.content])
 
   const {
     setNodeRef,

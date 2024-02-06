@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes, FC, ReactNode } from 'react'
+import type { ButtonHTMLAttributes, FC, ReactNode } from 'react'
 
 interface CustomButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   onCustomClick?: () => void
@@ -7,7 +7,7 @@ interface CustomButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   type: 'submit' | 'button' | 'reset'
 }
 
-const CustomButton: FC<CustomButtonProps> = ({
+const Button: FC<CustomButtonProps> = ({
   onClick,
   className,
   children,
@@ -24,7 +24,6 @@ const CustomButton: FC<CustomButtonProps> = ({
       text-white text-base
       font-bold
       flex items-center justify-center
-      
       ${className || ''}`}
     >
       {children}
@@ -32,4 +31,4 @@ const CustomButton: FC<CustomButtonProps> = ({
   )
 }
 
-export default CustomButton
+export default Button

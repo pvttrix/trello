@@ -1,11 +1,15 @@
-import { FC, FormEvent, useState } from 'react'
+import type { FC, FormEvent } from 'react'
+import { useState } from 'react'
 
 import { useAppDispatch } from '../../hooks/useDispatch'
 import { createBoard } from '../../store/slices/BoardSlice'
 import Button from '../../ui/Button'
 import InputField from '../../ui/InputField'
 
-const CreateTaskBoardForm: FC<{ onCloseModal?: () => void }> = ({
+interface CreateTaskBoardFormProps {
+  onCloseModal?: () => void
+}
+const CreateTaskBoardForm: FC<CreateTaskBoardFormProps> = ({
   onCloseModal,
 }) => {
   const [boardName, setBoardName] = useState('')

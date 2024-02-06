@@ -1,10 +1,14 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { IoMdAddCircleOutline } from 'react-icons/io'
+
 import Button from '../../ui/Button'
 import Modal from '../../ui/Popup'
-import CreateColumn from './CreateColumnForm'
 
-const CreateColumnButton: FC<{ idx: number }> = ({ idx }) => {
+import CreateColumn from './CreateColumnForm'
+interface CreateColumnButtonProps {
+  idx: number
+}
+const CreateColumnButton: FC<CreateColumnButtonProps> = ({ idx }) => {
   return (
     <Modal>
       <Modal.Open opens="create-column">

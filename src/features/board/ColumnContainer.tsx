@@ -1,18 +1,29 @@
 import { SortableContext, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { FC, useMemo, useState } from 'react'
+import type { FC } from 'react'
+import { useMemo, useState } from 'react'
 import { CiEdit } from 'react-icons/ci'
+
+import { useAppDispatch } from '../../hooks/useDispatch.ts'
 import { useAppSelector } from '../../hooks/useSelector'
-import { selectTasks } from '../../store/slices/BoardSlice'
-import { Column } from '../../types'
-import AddTaskButton from './AddTaskButton'
+import { addTask, selectTasksByColumnId } from '../../store/slices/BoardSlice'
+import type { Column } from '../../types'
+import Button from '../../ui/Button.tsx'
+
 import TaskCard from './TaskCard'
 import UpdateColumnTitle from './UpdateColumnTitle'
 
-const ColumnContainer: FC<{ column: Column }> = ({ column }) => {
+interface ColumnContainerProps {
+  column: Column
+}
+const ColumnContainer: FC<ColumnContainerProps> = ({ column }) => {
   const [isTitleEditing, setIsTitleEditing] = useState(false)
 
-  const tasks = useAppSelector(selectTasks(column.id))
+  const tasks = useAppSelector(selectTasksByColumnId(column.id))
+  const dispatch = useAppDispatch()
+  function handleAddTaskButton(columnId: string) {
+    dispatch(addTask({ columnId }))
+  }
 
   const tasksIds = useMemo(() => tasks.map((task) => task.id), [tasks])
 
@@ -40,8 +51,8 @@ const ColumnContainer: FC<{ column: Column }> = ({ column }) => {
     return (
       <div
         className="flex gap-3 opacity-35
-         flex-col basis-[320px] 
-         grow-0 shrink-0 h-full 
+         flex-col basis-[320px]
+         grow-0 shrink-0 h-full
          p-2 rounded-lg bg-lime-100 border-slate-300 border "
         ref={setNodeRef}
         style={style}
@@ -51,16 +62,21 @@ const ColumnContainer: FC<{ column: Column }> = ({ column }) => {
 
   return (
     <div
-      className="flex gap-3 flex-col basis-[320px] grow-0 shrink-0 h-full p-2 rounded-lg bg-base-col"
+      className="flex gap-3 flex-col
+      basis-[320px] grow-0 shrink-0
+      h-full p-2 rounded-lg bg-base-col overflow-y-auto"
       ref={setNodeRef}
       style={style}
     >
       <div
         {...attributes}
         {...listeners}
-        className="w-full items-center px-3 py-2 bg-primary-col
-      rounded-md flex justify-center text-white gap-3 hover:cursor-pointer
-      "
+        className="w-full items-center px-3 py-2
+        bg-primary-col
+        rounded-md flex justify-center
+        text-white gap-3
+        hover:cursor-pointer
+        "
       >
         {isTitleEditing ? (
           <UpdateColumnTitle
@@ -71,12 +87,13 @@ const ColumnContainer: FC<{ column: Column }> = ({ column }) => {
         ) : (
           <>
             <h3 className="text-center text-2xl ">{column.title}</h3>
-            <button
+            <Button
+              type="button"
               className="hover:cursor-pointer px-3 py-1"
               onClick={() => setIsTitleEditing(true)}
             >
               <CiEdit />
-            </button>
+            </Button>
           </>
         )}
       </div>
@@ -86,7 +103,9 @@ const ColumnContainer: FC<{ column: Column }> = ({ column }) => {
             <TaskCard task={task} key={task.id} />
           ))}
         </SortableContext>
-        <AddTaskButton column={column} />
+        <Button type="button" onClick={() => handleAddTaskButton(column.id)}>
+          Add task
+        </Button>
       </div>
     </div>
   )

@@ -8,11 +8,31 @@ module.exports = {
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
-  plugins: ['react-refresh'],
+  plugins: ['react-refresh', 'import'], // Include 'import' plugin here
   rules: {
+    '@typescript-eslint/consistent-type-imports': 'error',
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },
     ],
+    'import/order': [
+      'error',
+      {
+        'groups': ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+        'alphabetize': {
+          'order': 'asc',
+          'caseInsensitive': true
+        },
+        'pathGroups': [
+          {
+            'pattern': '@types/**',
+            'group': 'internal',
+            'position': 'before'
+          }
+        ],
+        'newlines-between': 'always',
+        'pathGroupsExcludedImportTypes': [],
+      },
+    ],
   },
-}
+};

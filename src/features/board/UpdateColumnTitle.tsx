@@ -1,14 +1,22 @@
-import { FC, FormEvent, useState } from 'react'
+import type { FC, FormEvent } from 'react'
+import { useState } from 'react'
+
 import { useAppDispatch } from '../../hooks/useDispatch'
 import { updateColumnName } from '../../store/slices/BoardSlice'
 import Button from '../../ui/Button'
 import InputField from '../../ui/InputField'
 
-const UpdateColumnTitle: FC<{
+interface UpdateColumnTitleProps {
   id: string
   columnTitle: string
   setIsTitleEditing: (isEditing: boolean) => void
-}> = ({ id, columnTitle, setIsTitleEditing }) => {
+}
+
+const UpdateColumnTitle: FC<UpdateColumnTitleProps> = ({
+  id,
+  columnTitle,
+  setIsTitleEditing,
+}) => {
   const [newTitle, setNewTitle] = useState(columnTitle)
   const dispatch = useAppDispatch()
 

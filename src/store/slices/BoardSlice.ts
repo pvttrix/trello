@@ -1,8 +1,11 @@
-import { UniqueIdentifier } from '@dnd-kit/core'
+import type { UniqueIdentifier } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSelector } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import { v4 as uuidv4 } from 'uuid'
-import { Column, Task } from '../../types'
+
+import type { Column, Task } from '../../types'
 import type { RootState } from '../store'
 
 interface IBoardState {
@@ -39,26 +42,20 @@ export const boardSlice = createSlice({
 
     updateColumnName: (
       state,
-      action: PayloadAction<{
-        columnId: UniqueIdentifier
-        newTitle: UniqueIdentifier
-      }>
+      action: PayloadAction<{ columnId: UniqueIdentifier; newTitle: string }>
     ) => {
-      const updatedColumns = state.columns.map((column) => {
-        if (column.id === action.payload.columnId) {
-          return { ...column, title: action.payload.newTitle }
-        }
-        return column
-      })
-
-      return { ...state, columns: updatedColumns }
+      const { columnId, newTitle } = action.payload
+      const columnIndex = state.columns.findIndex((col) => col.id === columnId)
+      if (columnIndex !== -1) {
+        state.columns[columnIndex].title = newTitle
+      }
     },
 
-    addTask: (
-      state,
-      action: PayloadAction<{ task: Task; columnId: string }>
-    ) => {
-      return { ...state, tasks: [...state.tasks, action.payload] }
+    addTask: (state, action: PayloadAction<{ columnId: string }>) => {
+      const { columnId } = action.payload
+      const newTask: Task = { id: uuidv4(), content: '', columnId }
+
+      return { ...state, tasks: [...state.tasks, newTask] }
     },
 
     swapTasksOverATable: (
@@ -84,7 +81,6 @@ export const boardSlice = createSlice({
         (task) => task.id === action.payload.targetTaskId
       )
       state.tasks[activeIndex].columnId = action.payload.onDropColumnId
-
     },
 
     updateTask: (
@@ -131,9 +127,12 @@ export const {
 } = boardSlice.actions
 
 export const selectBoard = (state: RootState) => state.board
-export const selectTasks =
-  (columnId: UniqueIdentifier) => (state: RootState) => {
-    return state.board.tasks.filter((task) => task.columnId === columnId)
-  }
+
+// Memoized selector factory function
+export const selectTasksByColumnId = (columnId: UniqueIdentifier) =>
+  createSelector(
+    (state: RootState) => state.board.tasks,
+    (tasks) => tasks.filter((task) => task.columnId === columnId)
+  )
 
 export default boardSlice.reducer
