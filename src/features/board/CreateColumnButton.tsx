@@ -18,7 +18,10 @@ const CreateColumnButton: FC<CreateColumnButtonProps> = ({ idx }) => {
   return (
     <Button
       type="button"
-      className="flex gap-2 items-center  bg-primary-col rounded-full w-[40px] h-[40px]"
+      className="
+      flex gap-2 items-center
+      justify-center bg-primary-col
+      rounded-lg"
       onClick={handleCreateColumn}
     >
       <IoMdAddCircleOutline />
