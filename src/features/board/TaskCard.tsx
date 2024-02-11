@@ -1,8 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import type { FC } from 'react'
-import { useEffect } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useAppDispatch } from '../../hooks/useDispatch'
 import { updateTask } from '../../store/slices/BoardSlice'
@@ -15,12 +14,15 @@ interface TaskCardProps {
 
 const TaskCard: FC<TaskCardProps> = ({ task }) => {
   const taskId = task.id
-  const [content, setContent] = useState(task.content)
+  const [localContent, setLocalContent] = useState(task.content)
+  const [isContentModified, setIsContentModified] = useState(false)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    setContent(task.content)
-  }, [task.content])
+    if (!isContentModified && localContent !== task.content) {
+      setLocalContent(task.content)
+    }
+  }, [localContent, task.content, isContentModified])
 
   const {
     setNodeRef,
@@ -43,18 +45,12 @@ const TaskCard: FC<TaskCardProps> = ({ task }) => {
   }
 
   function handleUpdateTaskContent() {
-    dispatch(updateTask({ taskId, content }))
+    if (isContentModified) {
+      dispatch(updateTask({ taskId, content: localContent }))
+      setIsContentModified(false)
+    }
   }
-  if (isDragging)
-    return (
-      <div
-        className={`py-5 px-2 w-full bg-white-accent rounded-md flex justify-stretch items-end gap-2 text-primary-col ${'opacity-35'}`}
-        ref={setNodeRef}
-        style={style}
-        {...attributes}
-        {...listeners}
-      ></div>
-    )
+
   return (
     <div
       className={`py-5 px-2 w-full bg-white-accent rounded-md flex justify-stretch items-end gap-2 text-primary-col ${
@@ -66,8 +62,11 @@ const TaskCard: FC<TaskCardProps> = ({ task }) => {
       {...listeners}
     >
       <TextArea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
+        value={localContent}
+        onChange={(e) => {
+          setLocalContent(e.target.value)
+          setIsContentModified(true)
+        }}
         onBlur={handleUpdateTaskContent}
       />
     </div>

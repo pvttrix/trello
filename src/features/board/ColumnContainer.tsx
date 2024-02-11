@@ -27,6 +27,7 @@ const ColumnContainer: FC<ColumnContainerProps> = ({
   const dispatch = useAppDispatch()
 
   function handleAddTaskButton(columnId: string, index: number) {
+    // Add task at the specified index
     dispatch(addTask({ columnId, index }))
   }
 
