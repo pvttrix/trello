@@ -11,13 +11,11 @@ import type { RootState } from '../store'
 interface IBoardState {
   name: string
   columns: Column[]
-  tasks: Task[]
 }
 
 const initialState: IBoardState = {
   name: '',
   columns: [],
-  tasks: [],
 }
 
 export const boardSlice = createSlice({
@@ -33,7 +31,7 @@ export const boardSlice = createSlice({
       action: PayloadAction<{ title: string; index: number }>
     ) => {
       const { title, index } = action.payload
-      const newColumn: Column = { id: uuidv4(), title }
+      const newColumn: Column = { id: uuidv4(), title, tasks: [] }
       const newColumns = [...state.columns]
       newColumns.splice(index, 0, newColumn)
 
@@ -53,60 +51,100 @@ export const boardSlice = createSlice({
 
     addTask: (
       state,
-      action: PayloadAction<{ columnId: string; index: number }>
+      action: PayloadAction<{
+        columnId: string
+        index: number
+      }>
     ) => {
       const { columnId, index } = action.payload
-      const newTask: Task = { id: uuidv4(), content: '', columnId }
+      const columnIndex = state.columns.findIndex((col) => col.id === columnId)
 
-      const adjustedIndex = Math.min(Math.max(index + 1, 0), state.tasks.length)
-
-      const newTasks = [
-        ...state.tasks.slice(0, adjustedIndex),
-        newTask,
-        ...state.tasks.slice(adjustedIndex),
-      ]
-
-      return { ...state, tasks: newTasks }
+      if (columnIndex !== -1) {
+        const newTask: Task = { id: uuidv4(), content: '' }
+        state.columns[columnIndex].tasks.splice(index, 0, newTask)
+      }
     },
-
     swapTasksOverATable: (
       state,
       action: PayloadAction<{ targetTaskId: string; onDropTaskId: string }>
     ) => {
-      const activeIndex = state.tasks.findIndex(
-        (task) => task.id === action.payload.targetTaskId
+      const { targetTaskId, onDropTaskId } = action.payload
+
+      // Find columns of both tasks
+      const activeColumnIndex = state.columns.findIndex((col) =>
+        col.tasks.some((task) => task.id === targetTaskId)
       )
-      const overIndex = state.tasks.findIndex(
-        (task) => task.id === action.payload.onDropTaskId
+      const overColumnIndex = state.columns.findIndex((col) =>
+        col.tasks.some((task) => task.id === onDropTaskId)
       )
 
-      state.tasks[activeIndex].columnId = state.tasks[overIndex].columnId
-      state.tasks = arrayMove(state.tasks, activeIndex, overIndex)
+      if (activeColumnIndex !== -1 && overColumnIndex !== -1) {
+        const activeTaskIndex = state.columns[
+          activeColumnIndex
+        ].tasks.findIndex((task) => task.id === targetTaskId)
+        const overTaskIndex = state.columns[overColumnIndex].tasks.findIndex(
+          (task) => task.id === onDropTaskId
+        )
+
+        // Swap tasks between columns
+        const activeTask =
+          state.columns[activeColumnIndex].tasks[activeTaskIndex]
+        state.columns[activeColumnIndex].tasks.splice(activeTaskIndex, 1)
+        state.columns[overColumnIndex].tasks.splice(
+          overTaskIndex,
+          0,
+          activeTask
+        )
+      }
     },
 
     addTaskInEmptyColumn: (
       state,
       action: PayloadAction<{ targetTaskId: string; onDropColumnId: string }>
     ) => {
-      const activeIndex = state.tasks.findIndex(
-        (task) => task.id === action.payload.targetTaskId
+      const { targetTaskId, onDropColumnId } = action.payload
+
+      const activeColumnIndex = state.columns.findIndex((col) =>
+        col.tasks.some((task) => task.id === targetTaskId)
       )
-      state.tasks[activeIndex].columnId = action.payload.onDropColumnId
+      const overColumnIndex = state.columns.findIndex(
+        (col) => col.id === onDropColumnId
+      )
+
+      if (activeColumnIndex !== -1 && overColumnIndex !== -1) {
+        const activeTaskIndex = state.columns[
+          activeColumnIndex
+        ].tasks.findIndex((task) => task.id === targetTaskId)
+
+        // Move task to the specified column
+        const activeTask =
+          state.columns[activeColumnIndex].tasks[activeTaskIndex]
+        state.columns[activeColumnIndex].tasks.splice(activeTaskIndex, 1)
+        state.columns[overColumnIndex].tasks.push(activeTask)
+      }
     },
 
     updateTask: (
       state,
-      action: PayloadAction<{ taskId: UniqueIdentifier; content: string }>
+      action: PayloadAction<{
+        columnId: UniqueIdentifier
+        taskId: UniqueIdentifier
+        content: string
+      }>
     ) => {
-      const { taskId, content } = action.payload
-      const updatedTasks = state.tasks.map((task) => {
-        if (task.id === taskId) {
-          return { ...task, content }
-        }
-        return task
-      })
+      const { columnId, taskId, content } = action.payload
 
-      return { ...state, tasks: updatedTasks }
+      const columnIndex = state.columns.findIndex((col) => col.id === columnId)
+      if (columnIndex !== -1) {
+        // Find the task within the column
+        const taskIndex = state.columns[columnIndex].tasks.findIndex(
+          (task) => task.id === taskId
+        )
+        if (taskIndex !== -1) {
+          // Update the task content
+          state.columns[columnIndex].tasks[taskIndex].content = content
+        }
+      }
     },
     swapColumns: (
       state,
@@ -142,8 +180,11 @@ export const selectBoard = (state: RootState) => state.board
 // Memoized selector factory function
 export const selectTasksByColumnId = (columnId: UniqueIdentifier) =>
   createSelector(
-    (state: RootState) => state.board.tasks,
-    (tasks) => tasks.filter((task) => task.columnId === columnId)
+    (state: RootState) => state.board.columns,
+    (columns) => {
+      const column = columns.find((col) => col.id === columnId)
+      return column ? column.tasks : []
+    }
   )
 
 export default boardSlice.reducer

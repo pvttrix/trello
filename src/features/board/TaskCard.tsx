@@ -10,9 +10,10 @@ import TextArea from '../../ui/TextArea.tsx'
 
 interface TaskCardProps {
   task: Task
+  columnId: string
 }
 
-const TaskCard: FC<TaskCardProps> = ({ task }) => {
+const TaskCard: FC<TaskCardProps> = ({ task, columnId }) => {
   const taskId = task.id
   const [localContent, setLocalContent] = useState(task.content)
   const [isContentModified, setIsContentModified] = useState(false)
@@ -46,7 +47,9 @@ const TaskCard: FC<TaskCardProps> = ({ task }) => {
 
   function handleUpdateTaskContent() {
     if (isContentModified) {
-      dispatch(updateTask({ taskId, content: localContent }))
+      dispatch(
+        updateTask({ columnId: columnId, taskId, content: localContent })
+      )
       setIsContentModified(false)
     }
   }

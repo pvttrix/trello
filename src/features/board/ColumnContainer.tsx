@@ -27,7 +27,6 @@ const ColumnContainer: FC<ColumnContainerProps> = ({
   const dispatch = useAppDispatch()
 
   function handleAddTaskButton(columnId: string, index: number) {
-    // Add task at the specified index
     dispatch(addTask({ columnId, index }))
   }
 
@@ -114,15 +113,15 @@ const ColumnContainer: FC<ColumnContainerProps> = ({
               {index === 0 ? (
                 <Button
                   type="button"
-                  onClick={() => handleAddTaskButton(column.id, index - 1)}
+                  onClick={() => handleAddTaskButton(column.id, index)}
                 >
                   Add task
                 </Button>
               ) : null}
-              <TaskCard task={task} />
+              <TaskCard task={task} columnId={column.id} />
               <Button
                 type="button"
-                onClick={() => handleAddTaskButton(column.id, index)}
+                onClick={() => handleAddTaskButton(column.id, index + 1)}
               >
                 Add task
               </Button>
@@ -132,7 +131,7 @@ const ColumnContainer: FC<ColumnContainerProps> = ({
         {!tasks.length && (
           <Button
             type="button"
-            onClick={() => handleAddTaskButton(column.id, tasks.length - 1)}
+            onClick={() => handleAddTaskButton(column.id, tasks.length)}
           >
             Add task
           </Button>
