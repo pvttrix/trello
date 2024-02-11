@@ -1,28 +1,28 @@
-import type { FC } from 'react'
+import type { FC, FormEvent } from 'react'
 import { IoMdAddCircleOutline } from 'react-icons/io'
 
+import { useAppDispatch } from '../../hooks/useDispatch.ts'
+import { addColumn } from '../../store/slices/BoardSlice.ts'
 import Button from '../../ui/Button'
-import Modal from '../../ui/Popup'
 
-import CreateColumn from './CreateColumnForm'
 interface CreateColumnButtonProps {
   idx: number
 }
 const CreateColumnButton: FC<CreateColumnButtonProps> = ({ idx }) => {
+  const dispatch = useAppDispatch()
+  function handleCreateColumn(e: FormEvent) {
+    e.preventDefault()
+
+    dispatch(addColumn({ title: '', index: idx }))
+  }
   return (
-    <Modal>
-      <Modal.Open opens="create-column">
-        <Button
-          type="button"
-          className="flex gap-2 items-center px-[4px] bg-secondary-col"
-        >
-          <IoMdAddCircleOutline />
-        </Button>
-      </Modal.Open>
-      <Modal.Window name="create-column">
-        <CreateColumn idx={idx} />
-      </Modal.Window>
-    </Modal>
+    <Button
+      type="button"
+      className="flex gap-2 items-center  bg-primary-col rounded-full w-[40px] h-[40px]"
+      onClick={handleCreateColumn}
+    >
+      <IoMdAddCircleOutline />
+    </Button>
   )
 }
 

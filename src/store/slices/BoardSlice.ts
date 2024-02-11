@@ -51,11 +51,32 @@ export const boardSlice = createSlice({
       }
     },
 
-    addTask: (state, action: PayloadAction<{ columnId: string }>) => {
-      const { columnId } = action.payload
+    addTask: (
+      state,
+      action: PayloadAction<{ columnId: string; index: number }>
+    ) => {
+      const { columnId, index } = action.payload
       const newTask: Task = { id: uuidv4(), content: '', columnId }
 
-      return { ...state, tasks: [...state.tasks, newTask] }
+      const columnIndex = state.columns.findIndex((col) => col.id === columnId)
+
+      if (columnIndex !== -1) {
+        const adjustedIndex = Math.min(
+          Math.max(index + 1, 0),
+          state.tasks.length
+        )
+
+        const newTasks = [
+          ...state.tasks.slice(0, adjustedIndex),
+          newTask,
+          ...state.tasks.slice(adjustedIndex),
+        ]
+
+        return { ...state, tasks: newTasks }
+      }
+
+      // If the column was not found, return the original state
+      return state
     },
 
     swapTasksOverATable: (

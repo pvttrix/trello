@@ -1,5 +1,5 @@
 import type { FC, FormEvent } from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { useAppDispatch } from '../../hooks/useDispatch'
 import { updateColumnName } from '../../store/slices/BoardSlice'
@@ -18,10 +18,19 @@ const UpdateColumnTitle: FC<UpdateColumnTitleProps> = ({
   setIsTitleEditing,
 }) => {
   const [newTitle, setNewTitle] = useState(columnTitle)
+  const [error, setError] = useState('')
   const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    setNewTitle(columnTitle)
+  }, [columnTitle])
 
   function handleUpdateTableName(e: FormEvent) {
     e.preventDefault()
+    if (newTitle.length > 150) {
+      setError('Title could not be bigger than 150 characters')
+      return
+    }
     dispatch(updateColumnName({ columnId: id, newTitle }))
     setIsTitleEditing(false)
   }
@@ -33,7 +42,12 @@ const UpdateColumnTitle: FC<UpdateColumnTitleProps> = ({
       <InputField
         type="text"
         value={newTitle}
-        onChange={(e) => setNewTitle(e.target.value)}
+        error={error}
+        autoFocus
+        onChange={(e) => {
+          setNewTitle(e.target.value)
+          setError('')
+        }}
       />
       <Button type="submit">Save</Button>
     </form>

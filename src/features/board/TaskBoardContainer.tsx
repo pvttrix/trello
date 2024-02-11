@@ -34,7 +34,7 @@ const TaskBoardContainer: FC = () => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 25,
+        distance: 150,
       },
     })
   )
@@ -153,7 +153,12 @@ const TaskBoardContainer: FC = () => {
         </SortableContext>
         {createPortal(
           <DragOverlay>
-            {activeColumn && <ColumnContainer column={activeColumn} />}
+            {activeColumn && (
+              <ColumnContainer
+                column={activeColumn}
+                isEditingInstantly={false}
+              />
+            )}
             {activeTask && <TaskCard task={activeTask} />}
           </DragOverlay>,
           document.body

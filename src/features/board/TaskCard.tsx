@@ -45,7 +45,16 @@ const TaskCard: FC<TaskCardProps> = ({ task }) => {
   function handleUpdateTaskContent() {
     dispatch(updateTask({ taskId, content }))
   }
-
+  if (isDragging)
+    return (
+      <div
+        className={`py-5 px-2 w-full bg-white-accent rounded-md flex justify-stretch items-end gap-2 text-primary-col ${'opacity-35'}`}
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+      ></div>
+    )
   return (
     <div
       className={`py-5 px-2 w-full bg-white-accent rounded-md flex justify-stretch items-end gap-2 text-primary-col ${

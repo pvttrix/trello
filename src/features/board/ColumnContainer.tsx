@@ -1,6 +1,7 @@
 import { SortableContext, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import type { FC } from 'react'
+import { Fragment } from 'react'
 import { useMemo, useState } from 'react'
 import { CiEdit } from 'react-icons/ci'
 
@@ -15,14 +16,18 @@ import UpdateColumnTitle from './UpdateColumnTitle'
 
 interface ColumnContainerProps {
   column: Column
+  isEditingInstantly?: boolean
 }
-const ColumnContainer: FC<ColumnContainerProps> = ({ column }) => {
-  const [isTitleEditing, setIsTitleEditing] = useState(false)
-
+const ColumnContainer: FC<ColumnContainerProps> = ({
+  column,
+  isEditingInstantly = true,
+}) => {
+  const [isTitleEditing, setIsTitleEditing] = useState(isEditingInstantly)
   const tasks = useAppSelector(selectTasksByColumnId(column.id))
   const dispatch = useAppDispatch()
-  function handleAddTaskButton(columnId: string) {
-    dispatch(addTask({ columnId }))
+
+  function handleAddTaskButton(columnId: string, index: number) {
+    dispatch(addTask({ columnId, index }))
   }
 
   const tasksIds = useMemo(() => tasks.map((task) => task.id), [tasks])
@@ -40,6 +45,7 @@ const ColumnContainer: FC<ColumnContainerProps> = ({ column }) => {
       type: 'column',
       column,
     },
+    disabled: isTitleEditing,
   })
 
   const style = {
@@ -76,6 +82,7 @@ const ColumnContainer: FC<ColumnContainerProps> = ({ column }) => {
         rounded-md flex justify-center
         text-white gap-3
         hover:cursor-pointer
+        overflow-x:hidden
         "
       >
         {isTitleEditing ? (
@@ -86,7 +93,9 @@ const ColumnContainer: FC<ColumnContainerProps> = ({ column }) => {
           />
         ) : (
           <>
-            <h3 className="text-center text-2xl ">{column.title}</h3>
+            <h3 className="text-center text-2xl overflow-x-hidden">
+              {column.title}
+            </h3>
             <Button
               type="button"
               className="hover:cursor-pointer px-3 py-1"
@@ -99,13 +108,34 @@ const ColumnContainer: FC<ColumnContainerProps> = ({ column }) => {
       </div>
       <div className="flex gap-5 flex-col">
         <SortableContext items={tasksIds}>
-          {tasks.map((task) => (
-            <TaskCard task={task} key={task.id} />
+          {tasks.map((task, index) => (
+            <Fragment key={task.id}>
+              {index === 0 ? (
+                <Button
+                  type="button"
+                  onClick={() => handleAddTaskButton(column.id, index - 1)}
+                >
+                  Add task
+                </Button>
+              ) : null}
+              <TaskCard task={task} />
+              <Button
+                type="button"
+                onClick={() => handleAddTaskButton(column.id, index)}
+              >
+                Add task
+              </Button>
+            </Fragment>
           ))}
         </SortableContext>
-        <Button type="button" onClick={() => handleAddTaskButton(column.id)}>
-          Add task
-        </Button>
+        {!tasks.length && (
+          <Button
+            type="button"
+            onClick={() => handleAddTaskButton(column.id, tasks.length - 1)}
+          >
+            Add task
+          </Button>
+        )}
       </div>
     </div>
   )

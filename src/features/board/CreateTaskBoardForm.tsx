@@ -33,7 +33,6 @@ const CreateTaskBoardForm: FC<CreateTaskBoardFormProps> = ({
         placeholder="Enter a board name"
         value={boardName}
         onChange={(e) => setBoardName(e.target.value)}
-        error={false}
       />
       <Button type="submit">Create a board</Button>
     </form>
