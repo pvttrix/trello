@@ -7,11 +7,10 @@ import Button from '../../ui/Button'
 import InputField from '../../ui/InputField'
 
 interface CreateColumnProps {
-  onCloseModal?: () => void
   idx: number
 }
 
-const CreateColumn: FC<CreateColumnProps> = ({ onCloseModal, idx }) => {
+const CreateColumn: FC<CreateColumnProps> = ({ idx }) => {
   const [columnName, setColumnName] = useState('')
   const [error, setError] = useState<string>('')
 
@@ -49,7 +48,6 @@ const CreateColumn: FC<CreateColumnProps> = ({ onCloseModal, idx }) => {
           setColumnName(e.target.value)
           setError('')
         }}
-        error={error !== ''}
       />
       <Button type="submit">Create Column</Button>
     </form>
